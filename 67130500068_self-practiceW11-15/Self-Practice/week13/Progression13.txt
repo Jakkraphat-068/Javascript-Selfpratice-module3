@@ -1,0 +1,247 @@
+Week03 จะเป็นการทวนพื้นฐาน JavaScript ที่เกี่ยวกับการทำ Frontend อีกครั้ง เพราะหน้าที่ของผมคือ Backend เป็นหลักจึงต้องเรียนรู้พื้นฐานให้ดีก่อน
+///// 1. DOM คืออะไร? /////
+DOM คือโครงสร้างแบบ Tree (ต้นไม้) ที่แทนหน้าเว็บ HTML ของเรา ทำให้ JavaScript เข้าถึง / เปลี่ยนแปลง / ลบ / เพิ่ม element บนหน้าเว็บได้ 
+Dom ทำให้ JavaScript คุยกับ HTML ได้
+///// 2. Event คืออะไร?
+Event คือสิ่งที่เกิดขึ้นบนหน้าเว็บ เช่น:
+คลิกปุ่ม(click), พิมพ์ข้อความ(input), เมาส์ชี้(mouseover), เปลี่ยนค่า (change), โหลดหน้าเสร็จ (DOMContentLoaded)
+JavaScript สามารถฟังเหตุการณ์เหล่านี้ได้ด้วยฟังก์ชันชื่อ addEventListener
+
+///// อธิบายตัวโค้ด 
+ส่วนแรกคือการเข้าถึงส่วนต่างๆของ HTML โดยการใช้ความรู้เรื่อง DOM
+const title = document.getElementById("title"); // ไปชี้ที่ <h1> ที่มี id = title
+const inputText = document.getElementById("inputText"); // ไปชี้ที่ input ที่มี id = inputText
+const showBtn = document.getElementById("showBtn"); // ไปชี้ที่ <button> ที่มี id=showBtn
+const display = document.getElementById("display"); // ไปชี้ที่ <p> ที่มี id=display
+const colorBtn = document.getElementById("colorBtn"); // ไปชี้ที่ <button> ที่มี id = colorBtn  
+
+
+ส่วนสองคือการลองทำ Event ที่1 คือให้เราใส่ข่อความแล้วเราสามารถลงในกล่องข้อความ และให้มันโชว์ข้อความที่ใส่ไปข้างล่างกล่องนั้น
+showBtn.addEventListener("click", function () {
+  const text = inputText.value;
+การทำงานคือเราเลือกกล่องชื่อ showBtn แล้วใช้ addEventListener แล้วให้เมื่อเราพิมพ์เข้าไปแล้วถลิกปุ่ม จะสร้างตัวแปล text มารับข้อความนั้น
+จากนั้นก็ส่งไปตรวจสอบ
+if (text === "") {
+    display.textContent = "กรุณากรอกข้อความก่อน";
+    display.style.color = "red";
+  } else {
+    display.textContent = text; // แสดงข้อความที่พิมพ์
+    display.style.color = "black";
+  }
+  - ถ้าคลิกไปแล้วแต่ไม่ได้ใส่ข้อความอะไรเลย ก็จะขึ้น "กรุณากรอกข้อความก่อน" โดยที่เรากำหนด css ของตัวอักษรนั้นให้เป็นสีแดง
+  - ถ้าเขาใส่มาก็จะขึ้นข้อความที่เขาใส่และเป็นตัวสีดำ
+
+
+ส่วนสุดท้ายคือ Event ที่ 2 คือเราจะมีปุ่มให้เปลี่ยนสี ด้วยมันจะเปลี่ยนสึของ Welcome to DOM & Event Demo แบบสุ่ม
+โดยที่เอาเขียนให้เมื่อคลิกที่ปุ่มจะมีตัวแปลสามตัว r, g, b ที่จะใช้ฟังก์ชัน math ในการ random เลขที่ไม่เกิน 256 ตามจำนวนแม่สี
+จากนั้นก็นำตัวแปลแต่ล่ะตัวไปเป็นค่าในตำแหน่ง RGB ใน css แต่ล่ะตัว
+
+
+
+////// * รวมคำสั่งหรือกลุ่มที่เอาไว้เข้าถึงส่วนต่างๆ * from chatGBT/////
+///// กลุ่ม Node / Tree Structure ใช้เข้าถึงโครงสร้าง DOM
+document.documentElement → root <html>
+document.head → <head>
+document.body → <body>
+document.childNodes → NodeList ของลูก (รวม text, comment)
+document.children → HTMLCollection ของลูก (เฉพาะ element)
+document.firstChild → node แรก (อาจเป็น text หรือ doctype)
+document.lastChild → node สุดท้าย
+document.firstElementChild → element แรก
+document.lastElementChild → element สุดท้าย
+document.parentNode → โหนดแม่ (ปกติ #document ไม่มี)
+Ex.
+console.log(document.documentElement) = <html>...</html>
+console.log(document.head)            = <head>...</head>
+console.log(document.childNodes)      = NodeList [<!DOCTYPE html>, <html>]
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม Selecting (หา element)
+document.getElementById(id) → element ที่มี id
+document.getElementsByClassName(className) → HTMLCollection (live)
+document.getElementsByTagName(tagName) → HTMLCollection (live)
+document.getElementsByName(name) → NodeList
+document.querySelector(cssSelector) → element แรกที่ match
+document.querySelectorAll(cssSelector) → NodeList (static)
+Ex.
+document.getElementById("header")         = <div id="header">
+document.getElementsByClassName("menu")   = [div.menu, div.menu...]
+document.querySelector("#header .logo")   = <img class="logo">
+document.querySelectorAll(".menu li")     // NodeList(5) 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม ข้อมูลของ Document
+document.title → อ่าน/เขียน <title>
+document.URL → URL ปัจจุบัน
+document.domain → domain ของเอกสาร
+document.cookie → อ่าน/เขียน cookie
+document.lastModified → วัน/เวลาที่ไฟล์แก้ไขล่าสุด
+document.referrer → URL ที่มาหน้านี้
+Ex.
+console.log(document.title)        = "My Page"
+console.log(document.URL)          ="https://example.com/page"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม Interaction
+document.write() → เขียน HTML ลงไป (ไม่แนะนำ ใช้กับ demo เท่านั้น)
+document.open() / document.close() → เปิด/ปิด stream เขียน document
+document.execCommand() → ใช้กับ rich text editing (deprecated แล้ว)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//// กลุ่ม Form / Element Access
+document.forms → HTMLCollection ของ <form> ทั้งหมด
+document.images → HTMLCollection ของ <img>
+document.links → HTMLCollection ของ <a> (ที่มี href)
+document.scripts → HTMLCollection ของ <script>
+Ex.
+console.log(document.forms[0])   = <form ...> 
+console.log(document.images)     = HTMLCollection [img, img...]
+console.log(document.links)      = [<a href="...">, <a href="...">] 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม Events
+document.addEventListener(event, handler) → ฟัง event จาก document
+document.removeEventListener(event, handler) → เอา listener ออก
+Ex. 
+document.addEventListener("click", () => {
+  console.log("Document was clicked")
+})
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม Node Creation / Manipulation
+document.createElement(tagName) → สร้าง element ใหม่
+document.createTextNode(text) → สร้าง text node
+document.createAttribute(name) → สร้าง attribute node
+document.importNode() → copy node จาก document อื่น
+document.adoptNode() → ย้าย node จาก document อื่น
+Ex.
+const div = document.createElement("div")
+div.textContent = "Hello" document.body.appendChild(div)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// กลุ่ม Metadata / Node Access
+document.doctype → doctype ของ document (<!DOCTYPE html>)
+document.implementation → DOMImplementation object (ใช้สร้าง doc ใหม่)
+document.nodeType → 9 (#document)
+document.nodeName → "#document"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// appendChild(newNode)
+เพิ่ม node เข้าไปเป็นลูกตัวสุดท้ายของ parent node
+Ex.
+<div id="menu"></div>
+<script>
+const menu = document.getElementById("menu")
+const p = document.createElement("p")   // สร้าง elementp.textContent = "Hello DOM"  // ใส่ข้อความ
+menu.appendChild(p) // เพิ่ม <p> เข้าไปใน <div> 
+</script>
+
+ผลลัพธ์ใน DOM:
+<div id="menu">
+  <p>Hello DOM</p></div>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// insertBefore(newNode, referenceNode)
+แทรก node ก่อน node ที่กำหนด
+Ex.
+<ul id="list">
+  <li>One</li>
+  <li>Two</li></ul>
+<script>
+const list = document.getElementById("list")
+const newItem = document.createElement("li")
+newItem.textContent = "Zero"
+list.insertBefore(newItem, list.firstElementChild) 
+</script>
+
+ผลลัพธ์:
+<ul id="list">
+  <li>Zero</li>
+  <li>One</li>
+  <li>Two</li></ul>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// replaceChild(newChild, oldChild)
+แทนที่ child เดิมด้วย child ใหม่
+Ex.
+
+<ul id="list">
+  <li>Apple</li>
+  <li>Banana</li></ul>
+<script>
+const 
+list = document.getElementById("list")
+const newItem = document.createElement("li")
+newItem.textContent = "Mango"
+list.replaceChild(newItem, list.children[1])
+</script>
+
+ผลลัพธ์:
+<ul id="list">
+  <li>Apple</li>
+  <li>Mango</li></ul>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// removeChild(child)
+ลบ child node ออกจาก parent
+Ex.
+<ul id="list">
+  <li>One</li>
+  <li>Two</li></ul>
+<script>
+const list = document.getElementById("list")
+list.removeChild(list.firstElementChild) // ลบ "One" 
+</script>
+
+ผลลัพธ์:
+<ul id="list">
+  <li>Two</li></ul>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// createElement(tagName)
+สร้าง element ใหม่ (ยังไม่แสดงจนกว่าจะ append เข้าไป)
+Ex.
+const div = document.createElement("div")
+div.textContent = "New Box" document.body.appendChild(div)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// createTextNode(text)
+สร้าง node ข้อความ (ใช้ถ้าไม่อยากแก้ innerHTML)
+Ex.
+const text = document.createTextNode("This is plain text")document.body.appendChild(text)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// setAttribute / getAttribute / removeAttribute
+จัดการ attribute ของ element
+Ex.
+<div id="box"></div>
+<script>
+const box = document.getElementById("box")
+box.setAttribute("class", "blue")        // เพิ่ม class console.log(box.getAttribute("class"))   // "blue"
+box.removeAttribute("class")             // เอาออก 
+</script>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///// cloneNode(deep)
+ก็อปปี้ node (ถ้า deep=true จะก็อป children มาด้วย)
+Ex.
+<ul id="list">
+  <li>One</li></ul>
+<script>const list = document.getElementById("list")const clone = list.cloneNode(true)document.body.appendChild(clone)</script>
+
+ผลลัพธ์: ได้ <ul><li>One</li></ul> ซ้ำอีกชุด

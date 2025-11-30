@@ -1,0 +1,70 @@
+สอนเรื่องการเชื่อมต่อระหว่าง Frontend และ Backend โดยใช้ Fetch API เพื่อจัดการข้อมูลแบบ CRUD (Create, Read, Update, Delete) ผ่านโปรโตคอล HTTP
+// REST API และ JSON
+1.))) Get method ใช้สำหรับขอข้อมูลจาก Server
+แบบ Async/Await
+- const res = await fetch('https://localhost:5000/todos'); = ส่ง request ไปยัง URL ที่กำหนด (ค่า default คือ GET)
+- const data = await res.json(); = รอรับ response และแปลงข้อมูลจาก Stream เป็น JSON Object  
+
+แบบ promise.then()
+- .then((res) => res.json()) = เมื่อ Server ตอบกลับมา ให้แปลงเป็น JSON (แก้จาก response เป็น res ให้ตรงตัวแปร)
+- .then((data) => console.log(data)) = เมื่อแปลงเสร็จ ให้รับ data มาแสดงผล
+- .catch((error) => console.error('Error:', error)); = ดักจับ Error
+
+2.))) post method ใช้สำหรับสร้างข้อมูลใหม่
+แบบ Async/Await
+- const res = await fetch('https://localhost:5000/todos', { = ลบช่องว่างใน URL
+- method: 'POST', = ระบุว่าจะใช้ method POST
+- headers: {'Content-Type': 'application/json', }, = บอก Server ว่าข้อมูลที่ส่งไปเป็น JSON
+- body: JSON.stringify({ = แปลง Object JS เป็น JSON String เพื่อส่งข้าม Network
+- const addedTodo = await res.json(); = รอรับข้อมูลที่ Server ส่งกลับมา (มักเป็นข้อมูลที่เพิ่งสร้าง)
+     
+แบบ promise.then()
+- .then((res) => res.json()) = รับ response แล้วแปลงเป็น json
+- .then((addedTodo) => { = ทำงานต่อเมื่อได้ข้อมูลกลับมา
+
+3.))) Delete method ใช้สำหรับลบข้อมูลตาม ID ที่ระบุ
+/// แบบ Async/Await
+- const res = await fetch('https://localhost:5000/todos/1', {
+    method: 'DELETE',
+  }); 
+  ส่งคำสั่ง DELETE ไปที่ URL พร้อมระบุ ID (เช่น /1)
+
+- if (res.status === 200) {
+      console.log('Deleted successfully');
+  }
+  เช็ค Status Code ว่าสำเร็จหรือไม่ (200 = OK)
+
+/// แบบ Promise.then()
+- if (res.status === 200) {
+      console.log('Deleted successfully');
+    }
+    เช็คสถานะเมื่อ Server ตอบกลับ
+
+4.))) PUT Method ใช้สำหรับแก้ไขข้อมูล ทั้งหมด ของรายการนั้น
+/// แบบ Async/Await
+คล้าย แบบ Post แค่เปลี่ยนตรง method แต่ว่า
+body: JSON.stringify({
+        category: 'Work',
+        description: 'Prepare meeting notes',
+        ต้องส่งข้อมูลไปให้ครบทุก field (ถ้าขาด field ไหน field นั้นอาจหายไปเลย)
+
+/// แบบ Promise.then()
+.then((res) => res.json()) = แก้ไข: ต้อง return res.json() เพื่อส่งต่อไป .then ถัดไป
+  .then((editedTodo) => {console.log(editedTodo);} = รับค่าที่แปลงเสร็จแล้วมาแสดง
+
+5.))) Patch Method ใช้สำหรับแก้ไขข้อมูล เฉพาะ field ที่ส่งไป (Modify)
+/// แบบ Async/Await
+คล้าย partarn เดิม ต่างกันตรงที่ใน
+body: JSON.stringify({
+        description: 'Prepare meeting notes and presentation', 
+      }),
+      ส่งไปแค่ field ที่ต้องการแก้ (category จะยังคงเป็นค่าเดิม)
+
+แบบ Promise.then()
+.then((res) => res.json()) = แก้ไข: สั่งแปลง JSON
+.then((editedTodo) => {console.log(editedTodo);}) = แสดงผลข้อมูลที่แก้แล้ว
+
+
+    
+    
+

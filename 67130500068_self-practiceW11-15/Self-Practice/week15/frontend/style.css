@@ -1,0 +1,238 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(244,247,246); 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: rgb(0,51,102); 
+    color: white;
+    padding: 1rem 2.5rem; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    height: 60px; 
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    font-weight: bold;
+}
+
+header nav a {
+    display: inline-block; 
+    padding: 0.5rem 1rem;  
+    border-radius: 20px;   
+    text-decoration: none; 
+    font-weight: bold;     
+    background-color: rgb(0,123,255); 
+    color: white;              
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+header nav a:hover {
+    background-color: rgb(0,86,179); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+    cursor: pointer; 
+}
+
+main {
+    flex-grow: 1; 
+    padding: 2.5rem; 
+    display: flex;
+    justify-content: center;
+}
+
+.main-table {
+    background-color: white;
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    padding: 2rem;
+    width: 100%;
+    max-width: 1200px; 
+}
+
+.main-table h2 {
+    color: rgb(51,51,51);
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; 
+}
+
+th, td {
+    border: 1px solid rgb(221,221,221); 
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+thead th {
+    font-weight: 600;
+    color: rgb(68,68,68);
+}
+
+footer {
+    background-color: rgb(0,51,102); 
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.ecors-dialog {
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    margin: 0; 
+    width: fit-content;
+    max-width: 90%; 
+    border: none; 
+    padding: 0;
+    background: transparent;
+}
+
+.ecors-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+
+.ecors-dialog-message {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 400px; 
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.ecors-dialog-message p {
+    font-size: 1rem;
+    color: rgb(51,51,51);
+}
+
+.manage-button-container {
+    margin: 1.5rem 0;
+    text-align: right;
+}
+
+.ecors-button-manage {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(0, 123, 255);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ecors-button-manage:hover {
+    background-color: rgb(0, 86, 179);
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+}
+
+header nav #user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ecors-fullname {
+    font-weight: bold;
+}
+
+.ecors-button-signout {
+    display: inline-block; 
+    padding: 0.5rem 1rem;  
+    border-radius: 20px;   
+    text-decoration: none; 
+    font-weight: bold;     
+    background-color: rgb(220, 53, 69); 
+    color: white;              
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ecors-button-signout:hover {
+    background-color: rgb(165, 39, 52);
+}
+
+.declare-form {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.declare-form label {
+    font-weight: bold;
+}
+
+.ecors-dropdown-plan {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+}
+
+.ecors-button-declare {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(40, 167, 69); 
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ecors-button-declare:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.dialog-buttons {
+    text-align: right;
+    margin-top: 1.5rem;
+}
+
+.ecors-button-dialog {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(0, 123, 255);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.ecors-button-dialog:hover {
+    background-color: rgb(0, 86, 179);
+}

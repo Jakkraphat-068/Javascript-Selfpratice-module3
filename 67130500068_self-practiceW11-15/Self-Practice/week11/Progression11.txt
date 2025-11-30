@@ -1,0 +1,76 @@
+1.))) Synchronous vs Asynchronous (การทำงานแบบประสานเวลา vs ไม่ประสานเวลา)
+ใน JavaScript ปกติการทำงานจะเป็นแบบ Synchronous คือทำทีละบรรทัด บรรทัดบนต้องเสร็จก่อน บรรทัดล่างถึงจะทำงานได้ 
+แต่ปัญหาคือถ้าเราต้องรอดึงข้อมูลจาก Server นานๆ หน้าเว็บจะค้าง เราจึงต้องใช้ Asynchronous คือสั่งงานทิ้งไว้ แล้วโปรแกรมไปทำอย่างอื่นต่อได้เลย 
+เมื่อเสร็จแล้วค่อยกลับมาแจ้งเตือน
+
+Synchronous (ทำตามลำดับ)
+console.log('1. ต้มน้ำ');
+console.log('2. หั่นผัก'); 
+ผลลัพธ์: ต้มน้ำ => หั่นผัก (ต้องรอน้ำเดือดเสร็จก่อนถึงหั่นผักได้)
+
+setTimeout(() => {
+    console.log('3. น้ำเดือดแล้ว!'); 
+}, 3000); 
+สั่งต้มน้ำทิ้งไว้ 3 วินาที (3000ms)
+
+console.log('2. หั่นผักรอเลย');
+
+ผลลัพธ์ที่ได้จริง:
+1. เริ่มต้มน้ำ (Async)
+2. หั่นผักรอเลย  => ทำงานทันที ไม่ต้องรอน้ำเดือด (ผ่านไป 3 วิ) => น้ำเดือดแล้ว!
+
+2.))) Promise
+เมื่อเราทำงานแบบ Asynchronous เราต้องมีตัวจัดการเพื่อบอกว่า "งานเสร็จหรือยัง" สิ่งนั้นเรียกว่า Promise ซึ่งมี 3 สถานะ 
+- Pending: กำลังดำเนินการ (เช่น กำลังโหลดข้อมูล)
+- Fulfilled(Resolved): สำเร็จ (โหลดข้อมูลเสร็จแล้ว)
+- Rejected: ล้มเหลว (เช่น เน็ตหลุด หาไฟล์ไม่เจอ)
+
+
+const checkMoney = new Promise((resolve, reject) => { สร้าง Promise
+    const money = 100;
+     
+    if (money >= 100) { = ตรวจสอบเงื่อนไข
+        resolve("ซื้อของได้!"); = ถ้าสำเร็จ ส่งค่ากลับไป
+    } else {
+        reject("เงินไม่พอ"); = ถ้าล้มเหลว ส่ง Error กลับไป
+    }
+});
+
+// การเรียกใช้ Promise (.then / .catch) 
+checkMoney
+    .then((result) => { = ทำงานเมื่อสถานะเป็น Fulfilled
+        console.log("Success:", result); 
+    })
+    .catch((error) => { = ทำงานเมื่อสถานะเป็น Rejected
+        console.error("Failed:", error);
+    });
+
+3.))) Async / Await
+การใช้ .then() ซ้อนกันเยอะๆ จะทำให้อ่านยาก จึงเกิด Async/Await ขึ้นมา เพื่อให้เขียนโค้ด Asynchronous หน้าตาเหมือน Synchronous (อ่านจากบนลงล่าง) 
+ async: ใส่หน้า function เพื่อบอกว่าฟังก์ชันนี้มีการทำงานแบบ Async 
+ await: ใส่หน้า Promise เพื่อสั่งให้ "หยุดรอ" จนกว่า Promise จะทำงานเสร็จค่อยไปบรรทัดต่อไป
+
+// 
+function downloadFile() { = ฟังก์ชันนี้คืนค่าเป็น Promise
+    return new Promise((resolve) => {
+        setTimeout(() => resolve("ไฟล์มาแล้ว"), 2000);
+    });
+}
+
+//
+async function main() {
+    console.log("เริ่มดาวน์โหลด...");
+    
+    try {รอจนกว่า downloadFile จะเสร็จ (2 วินาที) แล้วเอาค่ามาเก็บใน file ถ้าไม่ได้ก็เข้า catch
+        const file = await downloadFile(); 
+        console.log("ได้รับ:", file);
+    } catch (error) {
+        console.error("ดาวน์โหลดล้มเหลว");
+    }
+    
+    console.log("จบการทำงาน");
+}
+
+main();
+
+4.))) REST API และ JSON

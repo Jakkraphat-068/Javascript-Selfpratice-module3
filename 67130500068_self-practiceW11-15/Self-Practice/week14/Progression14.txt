@@ -1,0 +1,181 @@
+อันนี้คือผมเอาโดค้ดจากเพื่อนของผมมาทำความเข้าใจแต่ล่ะส่วนและหลักการทำงานของโค้ดเพื่อน
+///// script.js
+1.)))document.addEventListener("DOMContentLoaded", () => {
+ลดโอกาส DOM error โดยรอจนกว่า Browser จะสร้าง DOM เสร็จก่อนแล้วค่อยเริ่มจับ element 
+ต่างๆ เพราะถ้า script ทำงานก่อน HTML ถูกโหลดตัวแปรที่ใช้จับ DOM element จะเป็น null ทันที
+
+2.)const tableBody = document.getElementById('plan-table-body');
+const ecorsDialog = document.querySelector('.ecors-dialog');
+const ecorsDialogMessage = document.querySelector('.ecors-dialog-message');
+const manageButton = document.getElementById('manage-button');
+DOM element เก็บไว้ในตัวแปร
+
+3.)))function showError(message) {
+    ecorsDialogMessage.textContent = message;
+    ecorsDialog.setAttribute('closedby','none');
+    ecorsDialog.showModal();
+}
+ฟังก์ชันแสดง Error Dialog โดยฟังก์ชันนี้ไว้ใช้เวลา fetch ล้มเหลว เช่น API ล่ม หรือ server ไม่ตอบ
+มันจะเปิด dialog แล้วเอาข้อความ error ที่ส่งเข้ามาขึ้นบนหน้าจอ
+กระบวนการทำงาน
+1.รับข้อความ error จาก parameter → message
+2.ใส่ลง DOM จริงผ่าน .textContent
+3.ปรับ attribute ของ dialog
+4.ใช้ .showModal() ให้ dialog เด้งขึ้นมาแบบล็อกหน้าจอ
+
+4.)))document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        if (ecorsDialog.open) {
+            event.preventDefault();
+        }
+    }
+});
+คือป้องกันไม่ให้กด Escape เพื่อปิด dialog โดยปกติ dialog สามารถปิดด้วยปุ่ม ESCแต่เราไม่อยากให้ user ปิดง่าย ๆ
+เลยดัก event keydown แล้วบอก browser ว่า "อย่าปิด"
+
+5.)))manageButton.addEventListener('click', () => {
+    window.location.href = './reserve.html'; 
+});
+ปุ่ม Manage => เปลี่ยนหน้าเว็บ เทียบเหมือน redirect แต่ทำจาก JavaScript
+
+6.)))Fetch คืออะไร? คำตอบคือ Fetch คือฟังก์ชันของ JavaScript ที่ใช้ “เรียกข้อมูลจาก Server” โดยมันจะส่ง HTTP Request ไปที่ API แล้วรอผลลัพธ์กลับมาและ
+ต้องใช้ async และ await เพราะ fetch ทำงานแบบ asynchronousคือไม่รอ server ตอบจน webpage ค้าง await ทำให้เขียน code อ่านง่ายเหมือน code ปกติ
+async function fetchStudyPlans() {
+    try {
+        const response = await fetch('http://localhost:3000/intproj25/sy3/itb-ecors/api/v1/study-plans');
+
+1.ฟังก์ชันนี้ถูกทำงานแบบ async
+2.fetch(url) ส่ง request ไป backend  
+3.await ทำให้ JavaScript หยุดรอ เฉพาะในฟังก์ชันนี้แต่หน้าเว็บยังใช้งานได้ ไม่ค้าง
+
+ 6.1)) if (!response.ok) {
+      throw new Error('There is a problem. Please try again later.');
+    }
+ ถ้า server ตอบเป็น 404, 500 ฯลฯ → เข้า catch
+
+ 6.2)) const plans = await response.json();
+ Backend ส่งข้อมูลมาแบบข้อความ JSON ต้องแปลงเป็น object ก่อนถึงจะวนลูปได้
+
+ 6.3)) tableBody.innerHTML = '';
+ plans.forEach(plan => {
+    const row = document.createElement('tr');
+    row.className = 'ecors-row';
+  1.เคลียร์ตารางก่อนแสดงข้อมูลใหม่
+  2.สร้าง <tr> ใน memory (ยังไม่โชว์บนเว็บ)
+  3.ตั้ง class ไว้ให้ CSS ตกแต่ง
+  4.สร้าง <td> สำหรับ id, code, name eng/th
+  5.ใส่ข้อมูลจาก JSON
+  6.append เข้า <tbody> เพื่อแสดงจริง
+
+ 6.4)) } catch (error) {
+    console.error('Error fetching study plans:', error.message);
+    showError('There is a problem. Please try again later.');
+}
+ถ้า fetch ล้มเหลว → แสดง dialog errorไม่ทำให้เว็บ crash
+
+7.fetchStudyPlans();
+เมื่อโหลดหน้าเสร็จ ดึงข้อมูลเลย ไม่ต้องกดปุ่ม
+
+Step flow การทำงานโดยภาพรวม 
+1.เริ่มโหลดหน้าเว็บ
+2.DOMContentLoaded => โค้ดเริ่มทำงาน
+3.จับปุ่ม / จับ dialog / จับ table
+4.ผูก event ต่าง ๆ (click, keydown)
+5.fetchStudyPlans() ทำงาน
+6.Fetch ส่ง request ไป backend
+7.Backend ส่ง JSON กลับมา
+8.แปลง JSON → object
+9.สร้าง <tr> และ <td> ตามจำนวนข้อมูล
+10.ใส่ข้อมูลลง table
+11.ถ้า error → เปิด dialog แจ้งผู้ใช้
+
+
+
+////// Vite คืออะไร
+Vite เป็นเครื่องมือช่วยพัฒนาเว็บแบบ frontend ที่ทำให้เราทำงานง่ายขึ้นมาก ๆ
+1.เวลาเราแก้ไฟล์ HTML/JS/CSS มันจะ รีเฟรชเฉพาะส่วนที่เปลี่ยน (HMR: Hot Module Replacement)ไม่ต้องโหลดหน้าใหม่ทั้งหมด ทำให้ทำงานเร็วกว่า Webpack เยอะ
+เหมาะกับโปรเจกต์ที่มีไฟล์เยอะและต้องทดสอบหน้าเว็บบ่อย ๆ
+2. คือ เวลาจะ deploy ก็ให้ Vite build มันจะรวมไฟล์, ย่อโค้ด, ทำไฟล์ให้เหมาะสำหรับ production ให้อัตโนมัติ
+
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  appType: 'mpa',
+  root: '.',
+  build: {
+    outDir: './dist',
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        reserve: './reserve.html'
+      }
+    }
+  }
+})
+
+- appType: 'mpa' หมายถึงโปรเจกต์เราเป็น MPA = Multi Page Applicationคือมีหลายหน้า เช่น index.html, reserve.htmlไม่ใช่เว็บแบบ SPA (Single Page)
+- root: '.' บอกว่า root ของโปรเจกต์คือโฟลเดอร์ปัจจุบัน เวลารัน npm run dev มันจะใช้ไฟล์จากโฟลเดอร์นี้เลย
+- build.outDir: './dist' เวลา build จะสร้างโฟลเดอร์ชื่อ distไฟล์ในนั้นคือไฟล์ที่พร้อมเอาไป deploy
+- rollupOptions.input บอกว่าเว็บเรามีหลายหน้า และให้ Rollup (ระบบ build ของ Vite) อ่าน entry HTML ทั้งสองไฟล์
+
+///// reserve.js
+1.))) Keycloak
+const keycloak = new Keycloak({
+    url: "http://10.4.84.83:8080",
+    realm: "itb-ecors",
+    clientId: `itb-ecors-sy3`
+});
+Keycloak คือระบบ Login ของมหาลัยและโค้ดนี้เชื่อมเว็บเรากับ Keycloak ถ้านักศึกษาไม่ login จะ redirect ไปหน้า login ทันที
+
+2.))) ฟังก์ชัน fetchApi
+async function fetchApi(url, options = {}) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${keycloak.token}` 
+    };
+    const response = await fetch(`${API_BASE_URL}${url}`, { ...options, headers });
+    return response;
+}
+สร้างฟังก์ชัน fetch แบบ custom ใส่ Token จาก Keycloak ให้ backend ตรวจสอบว่าเป็นนักศึกษาคนไหนและส่ง request ไปที่ API ของ backend
+ทำให้เวลาจะเรียก API เราสามารถเขียนง่าย ๆ แบบนี้ => fetchApi('/study-plans')
+
+3.))) ฟังก์ชันเช็คสถานะ Declare
+async function checkDeclarationStatus() {
+
+- GET รายการ study plans ทั้งหมด
+- ดูว่านักศึกษาคนนี้เคย declare หรือยัง
+- ถ้า declare แล้ว → โชว์สถานะ + ซ่อน dropdown
+- ถ้ายัง → เปิด dropdown ให้เลือก major
+
+4.))) Dropdown รายชื่อ major
+function populatePlanDropdown() {
+จะแทรก <option> ตามข้อมูล allStudyPlans
+
+5.))) กด Declare
+async function declarePlan() {
+1.อ่าน plan_id ที่เลือก
+2.ส่ง POST ไป backend
+3.ถ้าสำเร็จ → อัปเดตสถานะ + ซ่อน dropdown
+4.ถ้าเคย declare แล้ว → แสดง error dialog
+
+6.))) อัปเดตข้อความสถานะ
+function updateDeclarationStatus(data) {
+แสดงว่า declare อะไร เวลาไหน
+
+7.))) initKeycloak() ตรงนี้คือจุดเริ่มต้นของทั้งหมด
+const authenticated = await keycloak.init({
+    onLoad: 'login-required',
+    checkLoginIframe: false
+});
+- บังคับให้ user login (ไม่ login ใช้งานไม่ได้)
+- หลัง login => ได้ studentId จาก Token
+- และเรียก checkDeclarationStatus() เลย
+
+
+Step flow การทำงานโดยภาพรวม 
+1.โหลด Keycloak → ตรวจสอบว่า user login แล้วหรือยัง
+2.ถ้า login สำเร็จ → ดึง studentId จาก token
+3.เรียก API ดูว่าเด็กคนนี้ declare plan แล้วหรือยัง
+4.ถ้ายัง → เปิด dropdown ให้เลือก major และกด declare
+5.ถ้า declare แล้ว → ซ่อนปุ่ม declare แล้วโชว์สถานะ
+6.หากกด logout → ออกจากระบบผ่าน Keycloak

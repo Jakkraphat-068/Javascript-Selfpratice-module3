@@ -1,0 +1,77 @@
+เป็นอันเดิมที่ผมลองเอาไปทำต่อใน sprint ที่ 3
+สิ่งที่ผมแก้ไขและเพิ่มไปก็คือ
+1.))) เปลี่ยน Base URL
+1.1เปลี่ยน URL จากรันด้วยเลข port บน server เปลี่ยนเป็น bscit.sit.kmutt.ac.th
+ url: "https://bscit.sit.kmutt.ac.th/intproj25/ft/keycloak/" (urlเดิม: "http://10.4.84.83:8080")
+1.2 ใช้ API แบบ relative: "/intproj25/sy3/itb-ecors/api/v1" แทนอันเก่าที่ใช้ http://localhost:3000/
+ทำให้อันใหม่พร้อม deploy จริง ไม่ต้องพึ่ง localhost
+
+2.))) เปลี่ยน Keycloak Config
+เก่า url: "http://10.4.84.83:8080"
+ใหม่ url: "https://bscit.sit.kmutt.ac.th/intproj25/ft/keycloak/"
+เปลี่ยนจากเซิร์ฟเวอร์ local/intranet เป็นเซิร์ฟเวอร์จริงของโครงการภาคต้นรองรับ HTTPS
+
+3.))) เพิ่มปุ่มใหม่ change-plan และ cancel-plan ใน html ใน JS เพิ่ม event + logic
+const changeBtn = document.getElementById("change-button");
+const cancelBtn = document.getElementById("cancel-button");
+รองรับ Feature ใหม่:เปลี่ยน major, ยกเลิก major
+
+4.))) พิ่มฟังก์ชัน formatDate()
+function formatDate(dateString) { 
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const formatted = new Date(dateString).toLocaleString('en-GB', { ... });
+    return `${formatted} (${userTimezone})`;
+}
+แสดงเวลาแบบ local timezone + แสดง timezone เช่น (Asia/Bangkok) Ver เก่าใช้ toLocaleString() เฉย ๆ
+
+5.))) Dialog แบบใหม่รองรับ confirm
+showDialog(msg, mode = 'alert', onConfirm = null)
+confirm => Cancel Declaration + Keep Declaration
+เหมาะกับตอนผู้ใช้กด “Cancel declaration”
+
+6.) Backend ที่ผมทำใหม่มันเป็นแบบ camelCase ทำให้ API body เปลี่ยนจาก plan_id → planId
+เก่า body: JSON.stringify({ plan_id: parseInt(selectedPlanId) })
+ใหม่ body: JSON.stringify({ planId: parseInt(planId) })
+
+7.)ปรับฟังก์ชันโหลดข้อมูล: loadStatus()
+อันเก่ามีแค่ เช็ค declared / not declared
+ใหม่ เพิ่ม handling:
+- STATUS = DECLARED
+- STATUS = CANCELLED
+- ไม่พบ (404)
+รองรับฟีเจอร์ใหม่ของระบบ: มีการ “ยกเลิกประกาศ”จึงต้อง render UI ให้เหมาะกับสถานะทั้ง 3 แบบ
+
+8.))) ปรับ UI แยกชัดเจนเป็น 3 ฟังก์ชัน
+- updateUI_NotDeclared()
+- updateUI_Declared()
+- updateUI_Cancelled()
+โค้ดแยกส่วน UI ทำให้อ่านง่ายกว่าเวอร์ชันเก่า
+
+9.))) เพิ่ม changePlan()
+async function changePlan() { ... }
+ฟีเจอร์ใหม่: เปลี่ยน major ที่ประกาศไปแล้ว (Ver เก่าไม่มี => เพราะประกาศครั้งเดียวแล้วเปลี่ยนไม่ได้)
+
+10.))) เพิ่ม confirmCancel()
+async function confirmCancel() { ... }
+รองรับการยกเลิกประกาศ major
+
+11.))) เพิ่มเงื่อนไข dropdown change/declare
+if (!currentDeclaration || currentDeclaration.status === 'CANCELLED')
+    declareBtn.disabled = !val;
+else
+    changeBtn.disabled = val == currentDeclaration.planId;
+กรณีต่างๆ
+ไม่เคย declare = ใช้ปุ่ม Declare
+เคย declare = ใช้ปุ่ม Change
+เคย cancel = ใช้ปุ่ม Declare ใหม่
+
+12.))) ปรับ initAuth() => redirectUri ใหม่
+keycloak.logout({ 
+    redirectUri: window.location.origin + "/intproj25/sy3/itb-ecors/"
+});
+เพื่อรองรับ deploy path จริงใน production
+
+
+
+
+
